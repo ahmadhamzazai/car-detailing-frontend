@@ -1,0 +1,30 @@
+header {
+  background: 
+    linear-gradient(rgba(80, 80, 80, 0.85), rgba(80, 80, 80, 0.85));
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid gray;
+}
+header button{
+    padding: 5px 14px;
+    font-weight: 400;
+}
+nav {
+    height: 65px;
+}
+.menu{
+    display: none;
+    font-size: 1.7rem;
+}
+@media only screen and (max-width:900px){
+header li {
+    display: none;
+}
+.menu{
+    display: block;
+}
+}
+@media only screen and (max-width:450px){
+header button{
+    display: none;
+}
+}
