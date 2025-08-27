@@ -36,15 +36,9 @@
 .section1-text p {
   font-size: 1.1rem;
 }
-.section1-text button {
-  padding: 7px 15px;
-  border-radius: 10px;
-}
-.section1-text button:hover {
-  background: url("https://cdn.wallpapersafari.com/83/44/FOnoH8.gif");
-  background-size: cover;
-  background-position: center;
-}
+/* .section1-text button {
+  padding: 4px 15px;
+} */
 @media only screen and (max-width: 1210px) {
   .section1-text h1 {
     font-size: 3.7rem;

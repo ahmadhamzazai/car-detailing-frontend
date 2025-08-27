@@ -5,7 +5,7 @@ const Section3 = () => {
 
 
   return (
-    <div className="py-16 bg-gray-50 max-w-screen-2xl mx-auto">
+    <div className="py-16 bg-gray-50 w-full mx-auto">
       <div className="mx-auto px-4 text-center">
         <h2 className="text-3xl font-bold mb-2">Pricing Plans</h2>
         <p className="text-gray-600 mb-12">

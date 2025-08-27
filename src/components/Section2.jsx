@@ -4,7 +4,7 @@ import { services_data } from "../data/services_data.js";
 
 const Section2 = () => {
   return (
-    <section className="max-w-screen-2xl mx-auto  px-4 py-16 section2 flex flex-col items-center gap-[2.7rem]">
+    <section className="w-full mx-auto  px-4 py-16 section2 flex flex-col items-center gap-[2.7rem]">
       <div className="services-text">
         <h1 className="text-3xl font-bold mb-2">Our Services</h1>
         <p className="text-center text-gray-600">

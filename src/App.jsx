@@ -4,7 +4,7 @@ import Main from './components/Main'
 
 const App = () => {
   return (
-    <div className='relative'>
+    <div className='relative max-w-[2000px] mx-auto'>
     <Navbar />
     <Main/>
     </div>

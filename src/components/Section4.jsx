@@ -37,7 +37,7 @@ const Section4 = () => {
 
   return (
     <div className="bg-white py-20 px-4">
-      <div className="max-w-screen-2xl mx-auto text-center">
+      <div className="w-full mx-auto text-center">
         <h2 className="text-3xl font-bold mb-2">What Our Clients Say</h2>
         <p className="text-gray-600 mb-12">
           Trusted by luxury car owners across the city
