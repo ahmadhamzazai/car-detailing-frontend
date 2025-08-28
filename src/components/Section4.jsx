@@ -1,113 +1,206 @@
 import React, { useState } from "react";
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
-import { review } from "../data/reviews_data";
+import { motion } from "framer-motion";
+import { services_data } from "../data/services_data.js";
 
 const Section4 = () => {
+  const [formData, setFormData] = useState({
+    fullName: "",
+    phoneNumber: "",
+    emailAddress: "",
+    carMakeModel: "",
+    preferredDate: "",
+    preferredTime: "",
+    selectedServices: [],
+  });
 
+  const [submitted, setSubmitted] = useState(false);
 
-  const allreview = [...review, ...review];
-
-  const [activeCard, setActiveCard] = useState(0);
-
-  const goToPrevCard = () => {
-    setActiveCard((prevIndex) => Math.max(0, prevIndex - 1));
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const goToNextCard = () => {
-    setActiveCard((prevIndex) =>
-      Math.min(allreview.length - 1, prevIndex + 1)
-    );
+  const handleServiceToggle = (service) => {
+    setFormData((prev) => {
+      const alreadySelected = prev.selectedServices.includes(service.heading);
+      return {
+        ...prev,
+        selectedServices: alreadySelected
+          ? prev.selectedServices.filter((s) => s !== service.heading)
+          : [...prev.selectedServices, service.heading],
+      };
+    });
   };
 
-  const getTransformValue = () => {
-    let cardsPerView = 1;
-    if (window.innerWidth >= 1024) {
-      cardsPerView = 3;
-    } else if (window.innerWidth >= 640) {
-      cardsPerView = 2;
-    }
-    return `-${(activeCard / cardsPerView) * 100}%`;
-  };
+  // correct total calculation
+  const totalPrice = formData.selectedServices.reduce((acc, selected) => {
+    const service = services_data.find((s) => s.heading === selected);
+    if (!service) return acc;
+    const price = parseInt(service.price.replace(/[^0-9]/g, "")) || 0;
+    return acc + price;
+  }, 0);
 
-  const isAtStart = activeCard === 0;
-  const isAtEnd =
-    activeCard >=
-    allreview.length -
-      (window.innerWidth >= 1024 ? 3 : window.innerWidth >= 640 ? 2 : 1);
+  // discount logic
+  const countExcludingMobile = formData.selectedServices.filter(
+    (s) => s !== "Mobile Service"
+  ).length;
+
+  let discountRate = 0;
+  if (countExcludingMobile === 2) discountRate = 0.15;
+  if (countExcludingMobile === 4) discountRate = 0.25;
+  if (formData.selectedServices.length === services_data.length)
+    discountRate = 0.3;
+
+  const discount = totalPrice * discountRate;
+  const finalPrice = totalPrice - discount;
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log("Appointment booked:", formData);
+    setSubmitted(true);
+  };
 
   return (
-    <div className="bg-white py-20 px-4">
-      <div className="w-full mx-auto text-center">
-        <h2 className="text-3xl font-bold mb-2">What Our Clients Say</h2>
-        <p className="text-gray-600 mb-12">
-          Trusted by luxury car owners across the city
+    <motion.section
+      id="book-appointment"
+      className="bg-gray-50 w-full py-12 px-4 sm:px-6 lg:px-8"
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6 }}
+    >
+      <div className="max-w-2xl mx-auto text-center mb-6">
+        <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+          Book Your Appointment
+        </h2>
+        <p className="text-sm text-gray-600">
+          Select your services and schedule your car’s premium detailing.
         </p>
-        <div className="relative">
-          <div className="overflow-hidden">
-            <div
-              className="flex transition-transform duration-500 ease-in-out"
-              style={{ transform: `translateX(${getTransformValue()})` }}
-            >
-              {allreview.map((testimonial, index) => (
-                <div
-                  key={index}
-                  className="flex-shrink-0 w-full sm:w-1/2 lg:w-1/3 p-4"
-                >
-                  <div className="bg-gray-50 rounded-lg shadow-md p-8 h-full flex flex-col justify-between">
-                    <div className="mb-6 text-center">
-                      <div className="flex justify-center mb-4">
-                        {Array.from({ length: 5 }, (_, i) => (
-                          <svg
-                            key={i}
-                            className="w-5 h-5 text-yellow-400 fill-current mx-0.5"
-                            viewBox="0 0 20 20"
-                          >
-                            <path d="M10 1l2.39 6.75L19 7.64l-5.46 4.73L15.82 19 10 16.5l-5.82 2.5L6.46 12.37 1 7.64l6.61-.89L10 1z" />
-                          </svg>
-                        ))}
-                      </div>
-                      <p className="text-gray-700 italic text-lg">
-                        {testimonial.quote}
-                      </p>
-                    </div>
-                    <div className="flex items-center mt-auto justify-center">
-                      <div className="rounded-full h-14 w-14 flex items-center justify-center text-white text-2xl font-semibold bg-yellow-500 mr-4">
-                        {testimonial.initials}
-                      </div>
-                      <div className="text-left">
-                        <h4 className="text-xl font-bold text-gray-900">
-                          {testimonial.name}
-                        </h4>
-                        <p className="text-gray-500 text-sm">
-                          {testimonial.car}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {!isAtStart && (
-            <button
-              onClick={goToPrevCard}
-              className="absolute left-0 top-1/2 -translate-y-1/2 bg-white shadow-lg rounded-full p-4 text-gray-600 hover:text-gray-800 transition-colors duration-300 transform translate-x-1/2 z-10"
-            >
-              <FaChevronLeft className="w-6 h-6" />
-            </button>
-          )}
-          {!isAtEnd && (
-            <button
-              onClick={goToNextCard}
-              className="absolute right-0 top-1/2 -translate-y-1/2 bg-white shadow-lg rounded-full p-4 text-gray-600 hover:text-gray-800 transition-colors duration-300 transform -translate-x-1/2 z-10"
-            >
-              <FaChevronRight className="w-6 h-6" />
-            </button>
-          )}
-        </div>
       </div>
-    </div>
+
+      <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-md overflow-hidden">
+        {!submitted ? (
+          <form onSubmit={handleSubmit} className="p-6 space-y-6">
+            {/* Personal Info */}
+            <div>
+              <h3 className="text-base font-semibold text-gray-800 mb-3">
+                Personal Details
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <input
+                  type="text"
+                  name="fullName"
+                  placeholder="Full Name *"
+                  value={formData.fullName}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 text-sm rounded-md bg-gray-100 focus:ring-2 focus:ring-yellow-500 outline-none"
+                  required
+                />
+                <input
+                  type="tel"
+                  name="phoneNumber"
+                  placeholder="Phone Number *"
+                  value={formData.phoneNumber}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 text-sm rounded-md bg-gray-100 focus:ring-2 focus:ring-yellow-500 outline-none"
+                  required
+                />
+                <input
+                  type="email"
+                  name="emailAddress"
+                  placeholder="Email Address *"
+                  value={formData.emailAddress}
+                  onChange={handleChange}
+                  className="w-full col-span-2 px-3 py-2 text-sm rounded-md bg-gray-100 focus:ring-2 focus:ring-yellow-500 outline-none"
+                  required
+                />
+                <input
+                  type="text"
+                  name="carMakeModel"
+                  placeholder="Car Make & Model *"
+                  value={formData.carMakeModel}
+                  onChange={handleChange}
+                  className="w-full col-span-2 px-3 py-2 text-sm rounded-md bg-gray-100 focus:ring-2 focus:ring-yellow-500 outline-none"
+                  required
+                />
+              </div>
+            </div>
+
+            {/* Services */}
+            <div>
+              <h3 className="text-base font-semibold text-gray-800 mb-3">
+                Choose Services
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {services_data.map((service) => (
+                  <label
+                    key={service.heading}
+                    className={`flex items-center justify-between px-3 py-2 border rounded-md cursor-pointer transition text-sm ${
+                      formData.selectedServices.includes(service.heading)
+                        ? "bg-yellow-50 border-yellow-400"
+                        : "bg-gray-50 hover:bg-gray-100"
+                    }`}
+                  >
+                    <div className="flex items-center space-x-2">
+                      <input
+                        type="checkbox"
+                        checked={formData.selectedServices.includes(
+                          service.heading
+                        )}
+                        onChange={() => handleServiceToggle(service)}
+                        className="accent-yellow-500"
+                      />
+                      <span>{service.heading}</span>
+                    </div>
+                    <span className="font-semibold">
+                      {service.price.replace("Starting ", "")}
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Price Summary */}
+            {formData.selectedServices.length > 0 && (
+              <div className="bg-gray-50 rounded-md p-4 text-sm">
+                <h3 className="font-semibold mb-2">Price Summary</h3>
+                <p>Total: ${totalPrice}</p>
+                {discount > 0 && (
+                  <p className="text-green-600">
+                    Discount ({discountRate * 100}%): -${discount.toFixed(2)}
+                  </p>
+                )}
+                <p className="font-bold text-gray-900">
+                  Final Price: ${finalPrice.toFixed(2)}
+                </p>
+              </div>
+            )}
+
+            {/* Submit */}
+            <button
+              type="submit"
+              className="w-full py-2 rounded-md bg-yellow-400 hover:bg-yellow-500 text-white font-semibold text-base transition-transform transform hover:scale-105"
+            >
+              Confirm Appointment
+            </button>
+          </form>
+        ) : (
+          <div className="text-center py-12 px-6">
+            <h3 className="text-xl font-bold text-green-600 mb-2">
+              Appointment Booked!
+            </h3>
+            <p className="text-gray-700 text-sm mb-1">
+              Thank you{" "}
+              <span className="font-semibold">{formData.fullName}</span>.
+            </p>
+            <p className="text-gray-700 text-sm">
+              Your estimated total is{" "}
+              <span className="font-bold">${finalPrice.toFixed(2)}</span>. A
+              confirmation will be sent shortly.
+            </p>
+          </div>
+        )}
+      </div>
+    </motion.section>
   );
 };
 
