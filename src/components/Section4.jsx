@@ -46,10 +46,15 @@ const Section4 = () => {
   ).length;
 
   let discountRate = 0;
-  if (countExcludingMobile === 2) discountRate = 0.15;
-  if (countExcludingMobile === 4) discountRate = 0.25;
-  if (formData.selectedServices.length === services_data.length)
+  if (countExcludingMobile >= 2 && countExcludingMobile < 4) {
+    discountRate = 0.15;
+  }
+  if (countExcludingMobile >= 4) {
+    discountRate = 0.25;
+  }
+  if (formData.selectedServices.length === services_data.length) {
     discountRate = 0.3;
+  }
 
   const discount = totalPrice * discountRate;
   const finalPrice = totalPrice - discount;

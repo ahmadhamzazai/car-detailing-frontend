@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 
 const Section2 = () => {
   const [selectedServices, setSelectedServices] = useState([]);
+  const [showSummary, setShowSummary] = useState(true); // 👈 new state for toggle
 
   const toggleService = (service) => {
     if (selectedServices.includes(service)) {
@@ -12,6 +13,7 @@ const Section2 = () => {
     } else {
       setSelectedServices([...selectedServices, service]);
     }
+    setShowSummary(true); // 👈 always show summary when selecting services
   };
 
   // calculate totals
@@ -26,9 +28,15 @@ const Section2 = () => {
   ).length;
 
   let discountRate = 0;
-  if (countExcludingMobile === 2) discountRate = 0.15;
-  if (countExcludingMobile === 4) discountRate = 0.25;
-  if (selectedServices.length === services_data.length) discountRate = 0.3;
+  if (countExcludingMobile >= 2 && countExcludingMobile < 4) {
+    discountRate = 0.15;
+  }
+  if (countExcludingMobile >= 4) {
+    discountRate = 0.25;
+  }
+  if (selectedServices.length === services_data.length) {
+    discountRate = 0.3;
+  }
 
   const discount = totalPrice * discountRate;
   const finalPrice = totalPrice - discount;
@@ -68,17 +76,23 @@ const Section2 = () => {
                   : "bg-yellow-500"
               }`}
             >
-              {selectedServices.includes(card)
-                ? "Selected"
-                : card.price}
+              {selectedServices.includes(card) ? "Selected" : card.price}
             </button>
           </div>
         ))}
       </div>
 
       {/* Booking Summary */}
-      {selectedServices.length > 0 && (
-        <div className="mt-8 p-5 bg-gray-100 rounded-lg w-full max-w-md text-center shadow-md">
+      {selectedServices.length > 0 && showSummary && (
+        <div className="mt-8 p-5 bg-gray-100 rounded-lg w-full max-w-md text-center shadow-md relative">
+          {/* Close Button */}
+          <button
+            onClick={() => setShowSummary(false)}
+            className="absolute top-2 right-2 text-gray-500 hover:text-red-600 font-bold text-lg"
+          >
+            ✕
+          </button>
+
           <h2 className="font-bold text-xl mb-2">Booking Summary</h2>
           <ul className="mb-3">
             {selectedServices.map((s, i) => (
