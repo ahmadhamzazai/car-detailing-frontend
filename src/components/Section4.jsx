@@ -32,7 +32,6 @@ const Section4 = () => {
     });
   };
 
-  // correct total calculation
   const totalPrice = formData.selectedServices.reduce((acc, selected) => {
     const service = services_data.find((s) => s.heading === selected);
     if (!service) return acc;
@@ -40,7 +39,6 @@ const Section4 = () => {
     return acc + price;
   }, 0);
 
-  // discount logic
   const countExcludingMobile = formData.selectedServices.filter(
     (s) => s !== "Mobile Service"
   ).length;
@@ -59,10 +57,32 @@ const Section4 = () => {
   const discount = totalPrice * discountRate;
   const finalPrice = totalPrice - discount;
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Appointment booked:", formData);
-    setSubmitted(true);
+
+    const appointmentData = {
+      ...formData,
+      totalPrice,
+      discount,
+      finalPrice,
+    };
+
+    try {
+      const res = await fetch("http://localhost:3000/api/book_appointment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(appointmentData),
+      });
+
+      const data = await res.json();
+      console.log("Saved:", data);
+
+      if (data.success) {
+        setSubmitted(true);
+      }
+    } catch (err) {
+      console.error("Error saving appointment:", err);
+    }
   };
 
   return (
@@ -141,7 +161,6 @@ const Section4 = () => {
                   name="preferredDate"
                   value={formData.preferredDate}
                   onChange={handleChange}
-                  placeholder="Select Date *"
                   className="w-full px-3 py-2 text-sm rounded-md bg-gray-100 placeholder-gray-400 focus:ring-2 focus:ring-yellow-500 outline-none"
                   required
                 />
@@ -150,7 +169,6 @@ const Section4 = () => {
                   name="preferredTime"
                   value={formData.preferredTime}
                   onChange={handleChange}
-                  placeholder="Select Time *"
                   className="w-full px-3 py-2 text-sm rounded-md bg-gray-100 placeholder-gray-400 focus:ring-2 focus:ring-yellow-500 outline-none"
                   required
                 />
