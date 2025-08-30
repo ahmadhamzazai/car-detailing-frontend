@@ -130,6 +130,33 @@ const Section4 = () => {
               </div>
             </div>
 
+            {/* Appointment Date & Time */}
+            <div>
+              <h3 className="text-base font-semibold text-gray-800 mb-3">
+                Appointment Schedule
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <input
+                  type="date"
+                  name="preferredDate"
+                  value={formData.preferredDate}
+                  onChange={handleChange}
+                  placeholder="Select Date *"
+                  className="w-full px-3 py-2 text-sm rounded-md bg-gray-100 placeholder-gray-400 focus:ring-2 focus:ring-yellow-500 outline-none"
+                  required
+                />
+                <input
+                  type="time"
+                  name="preferredTime"
+                  value={formData.preferredTime}
+                  onChange={handleChange}
+                  placeholder="Select Time *"
+                  className="w-full px-3 py-2 text-sm rounded-md bg-gray-100 placeholder-gray-400 focus:ring-2 focus:ring-yellow-500 outline-none"
+                  required
+                />
+              </div>
+            </div>
+
             {/* Services */}
             <div>
               <h3 className="text-base font-semibold text-gray-800 mb-3">
@@ -196,6 +223,13 @@ const Section4 = () => {
             <p className="text-gray-700 text-sm mb-1">
               Thank you{" "}
               <span className="font-semibold">{formData.fullName}</span>.
+            </p>
+            <p className="text-gray-700 text-sm mb-1">
+              Your appointment is scheduled on{" "}
+              <span className="font-semibold">
+                {formData.preferredDate} at {formData.preferredTime}
+              </span>
+              .
             </p>
             <p className="text-gray-700 text-sm">
               Your estimated total is{" "}
